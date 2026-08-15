@@ -2,90 +2,73 @@
 #include <stdlib.h>
 #include <pcap.h>
 
+#include "../include/capture.h"
+
 int main(void) {
 	pcap_if_t *alldevs = NULL;
-	char errbuf[PCAP_ERRBUF_SIZE] = {0};
 
 	printf("NETWORK TRAFFIC ANALYZER\n");
-	printf("Npcap: %s\n\n", pcap_lib_version());
 	
-	int result = pcap_findalldevs(&alldevs, errbuf);
-	
-	if (result == -1) {
-		fprintf(stderr, "Error finding devices: %s\n", errbuf);
-		return 1;
+	int device_count = list_interfaces(&alldevs);
+	if(device_count < 0) {
+		return EXIT_FAILURE;
 	}
 
-	printf("Available network interfaces: \n");
+	int selected_index = 0;
 
-	int number = 0;
+	printf("\nSelect interface: ");
+	if (scanf("%d", &selected_index) != 1) {
+    printf("Invalid input.\n");
 
-	for(pcap_if_t *dev = alldevs; 
-			dev != NULL;
-			dev = dev->next) {
-				printf("DEVICE %d:\n", number);
-        printf("  Name: %s\n", dev->name);
+    pcap_freealldevs(alldevs);
 
-        if (dev->description != NULL) {
-            printf("  Description: %s\n", dev->description);
-        }
-        printf("\n");
+  	return EXIT_FAILURE;
+  }
 
-        number++;
-			}
+	if (selected_index < 0 ||
+        selected_index >= device_count) {
+    printf("Invalid interface number.\n");
 
-	printf("Total interfaces: %d\n", number);
+    pcap_freealldevs(alldevs);
 
-	//checking if any interfaces were found
-	if (number == 0) {
-		printf("No network interfaces found.\n");
-		pcap_freealldevs(alldevs);
-		return 1;
-	}
-	printf("\n");
-	//asking to choose an interface
-	int choice = 0;
-	printf("Enter interface number: ");
-	scanf("%d", &choice);
+    return EXIT_FAILURE;
+  }
 
-	if(choice < 0 || choice >= number) {
-		printf("Invalid interface number.\n");
-		pcap_freealldevs(alldevs);
-		return 1;
-	}
+	pcap_if_t *selected_device = alldevs;
 
-	//looking for chosen interface
-	pcap_if_t *dev = alldevs;
-	for (int i = 0; i < choice; i++) {
-		dev=dev->next;
-	}
-	printf("\nSelected interface: \n");
-	printf("%s\n", dev->name);
+  for (int i = 0; i < selected_index; i++) {
+    selected_device = selected_device->next;
+  }
 
-	if (dev -> description != NULL) {
-		printf("Description: %s\n", dev->description);
-	}
-	printf("\n");
-	//opening network interface
-	pcap_t *handle = pcap_open_live(
-		dev ->name,
-		65536,
-		1,
-		1000,
-		errbuf
-	);
+	printf("\nSelected interface:\n");
 
+  if (selected_device->description != NULL) {
+    printf("Description: %s\n", selected_device->description);
+  }
 
+  printf("Device: %s\n", selected_device->name);
+
+	char errbuf[PCAP_ERRBUF_SIZE] = {0};
+
+  pcap_t *handle = open_interface( selected_device->name,
+        errbuf
+  );
+ 	
 	if (handle == NULL) {
-		fprintf(stderr, "Error opening device: %s\n", errbuf);
-		pcap_freealldevs(alldevs);
-		return 1;
-	}
+    fprintf(stderr, "Could not open interface:\n%s\n", errbuf);
 
-	printf("Capture started...\n");
-	printf("Waiting for packets...\n");
+    pcap_freealldevs(alldevs);
 
-	pcap_freealldevs(alldevs);
+    return EXIT_FAILURE;
+  } 
 
-	return 0;
+	printf("\nInterface opened successfully!\n");
+
+	close_capture(handle);
+
+  pcap_freealldevs(alldevs);
+
+  printf("Capture session closed.\n");
+
+  return EXIT_SUCCESS;
 }
