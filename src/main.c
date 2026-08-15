@@ -64,6 +64,8 @@ int main(void) {
 
 	printf("\nInterface opened successfully!\n");
 
+  capture_pakets(handle, 10);
+
 	close_capture(handle);
 
   pcap_freealldevs(alldevs);

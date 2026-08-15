@@ -12,6 +12,8 @@ pcap_t *open_interface(
     char *errbuf
 );
 
+void capture_pakets(pcap_t *handle, int packets_count);
+
 void close_capture(pcap_t *handle);
 
 #endif

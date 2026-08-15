@@ -38,7 +38,8 @@ int list_interfaces(pcap_if_t **devices) {
 
     return index;
 }
-	pcap_t *open_interface(
+
+pcap_t *open_interface(
     const char *device_name,
     char *errbuf
 ) {
@@ -60,6 +61,41 @@ int list_interfaces(pcap_if_t **devices) {
 
   return handle;
 }
+
+void capture_pakets(pcap_t *handle, int packets_count) {
+  struct pcap_pkthdr *header = NULL;
+  const u_char *packet = NULL;
+
+  int packet_number = 0;
+
+  printf("\nCapturing packets...\n");
+  fflush(stdout);
+
+  while (packet_number < packets_count) {
+    int result = pcap_next_ex(
+      handle, 
+      &header, 
+      &packet
+    );
+
+    if (result == 1) {
+      packet_number++;
+      printf("Packet #%d\n", packet_number);
+      printf("Captured length %u\n", header->caplen);
+      printf("Original length %u\n", header->len);
+    } else if (result == 0) {
+      printf("Timeout occurred.\nNo packet was available yet.\n");
+      continue;
+    } else if (result == -1) {
+      fprintf(stderr, "Error while capturing packet%s", pcap_geterr(handle));
+    } else if (result == -2) {
+      printf("End of packet capturing.\n");
+    }
+  }
+
+  printf("Packet cupture finished.\n");
+}
+
 
 void close_capture(pcap_t *handle) {
 	if (handle != NULL) {
