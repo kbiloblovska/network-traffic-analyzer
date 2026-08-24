@@ -3,6 +3,7 @@
 #include <pcap.h>
 
 #include "../include/capture.h"
+#include "../include/ethernet.h"
 
 int main(void) {
 	pcap_if_t *alldevs = NULL;
@@ -64,7 +65,7 @@ int main(void) {
 
 	printf("\nInterface opened successfully!\n");
 
-  capture_pakets(handle, 10);
+  capture_packets(handle, 10);
 
 	close_capture(handle);
 

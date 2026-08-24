@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pcap.h>
 #include "../include/capture.h"
+#include "../include/ethernet.h"
 
 int list_interfaces(pcap_if_t **devices) {
 	char errbuf[PCAP_ERRBUF_SIZE] = {0};
@@ -62,7 +63,7 @@ pcap_t *open_interface(
   return handle;
 }
 
-void capture_pakets(pcap_t *handle, int packets_count) {
+void capture_packets(pcap_t *handle, int packets_count) {
   struct pcap_pkthdr *header = NULL;
   const u_char *packet = NULL;
 
@@ -71,6 +72,12 @@ void capture_pakets(pcap_t *handle, int packets_count) {
   printf("\nCapturing packets...\n");
   fflush(stdout);
 
+  int link_type = pcap_datalink(handle);
+
+  if (link_type != DLT_EN10MB) {
+    printf("ERROR: Unsupported link type.\n");
+    return;
+  }
   while (packet_number < packets_count) {
     int result = pcap_next_ex(
       handle, 
@@ -80,20 +87,24 @@ void capture_pakets(pcap_t *handle, int packets_count) {
 
     if (result == 1) {
       packet_number++;
-      printf("Packet #%d\n", packet_number);
+      printf("\nPacket #%d\n", packet_number);
       printf("Captured length %u\n", header->caplen);
       printf("Original length %u\n", header->len);
+      analyze_ethernet(packet, header->caplen);
+      printf("\n");
     } else if (result == 0) {
-      printf("Timeout occurred.\nNo packet was available yet.\n");
+      printf("\nTimeout occurred.\nNo packet was available yet.\n");
       continue;
     } else if (result == -1) {
       fprintf(stderr, "Error while capturing packet%s", pcap_geterr(handle));
+      break;
     } else if (result == -2) {
       printf("End of packet capturing.\n");
+      break;
     }
   }
-
-  printf("Packet cupture finished.\n");
+  
+  printf("Packet capture finished.\n");
 }
 
 
