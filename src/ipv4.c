@@ -6,6 +6,7 @@
 #include "../include/ipv4.h"
 #include "../include/tcp.h"
 #include "../include/udp.h"
+#include "../include/icmp.h"
 
 #pragma pack(push, 1)
 struct ipv4_header
@@ -90,7 +91,7 @@ void analyze_ipv4(
 	printf("Destination IP: %u.%u.%u.%u\n", (dest_ip >> 24) & 0xFF, (dest_ip >> 16) & 0xFF, (dest_ip >> 8) & 0xFF, dest_ip & 0xFF);
 
 	switch (protocol) {
-		case IP_PROTOCOL_ICMP: protocol_name = "ICMP"; break;
+		case IP_PROTOCOL_ICMP: protocol_name = "ICMP"; analyze_icmp(packet + ihl * 4, caplen - ihl * 4); break;
 		case IP_PROTOCOL_TCP:  protocol_name = "TCP";  analyze_tcp(packet + ihl * 4, caplen - ihl * 4); break;
 		case IP_PROTOCOL_UDP:  protocol_name = "UDP";  analyze_udp(packet + ihl * 4, caplen - ihl * 4); break;
 		default:               protocol_name = "Unknown"; break;
