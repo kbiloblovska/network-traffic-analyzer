@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <pcap.h>
+
 #include "../include/capture.h"
 #include "../include/ethernet.h"
+#include "../include/ipv4.h"
 
 int list_interfaces(pcap_if_t **devices) {
 	char errbuf[PCAP_ERRBUF_SIZE] = {0};
@@ -91,6 +93,8 @@ void capture_packets(pcap_t *handle, int packets_count) {
       printf("Captured length %u\n", header->caplen);
       printf("Original length %u\n", header->len);
       analyze_ethernet(packet, header->caplen);
+      printf("\n");
+      analyze_ipv4(packet + 14, header->caplen - 14);
       printf("\n");
     } else if (result == 0) {
       printf("\nTimeout occurred.\nNo packet was available yet.\n");

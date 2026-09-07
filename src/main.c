@@ -4,6 +4,7 @@
 
 #include "../include/capture.h"
 #include "../include/ethernet.h"
+#include "../include/ipv4.h"
 
 int main(void) {
 	pcap_if_t *alldevs = NULL;
