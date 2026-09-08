@@ -78,17 +78,18 @@ void analyze_ipv4(
 	uint32_t source_ip = ntohl(ip->source);
 	uint32_t dest_ip = ntohl(ip->destination);
 
-	printf("IPv4 Packet:\n");
-	printf("Version: %u\n", version);
-	printf("IHL: %u (Header Length: %u bytes)\n", ihl, ihl * 4);
-	printf("Total Length: %u\n", total_length);
-	printf("Identification: %u\n", identification);
+	printf("\nIPv4\n");
+	printf("--------------------------------------------------------------\n");
+	printf("Version                  : %u\n", version);
+	printf("IHL                      : %u (Header Length: %u bytes)\n", ihl, ihl * 4);
+	printf("Total Length             : %u\n", total_length);
+	printf("Identification           : %u\n", identification);
 	printf("Flags and Fragment Offset: %u\n", flags_fragment_offset);
-	printf("TTL: %u\n", ttl);
-	printf("Protocol: %u (%s)\n", protocol, protocol_name);
-	printf("Checksum: 0x%04X\n", checksum);
-	printf("Source IP: %u.%u.%u.%u\n", (source_ip >> 24) & 0xFF, (source_ip >> 16) & 0xFF, (source_ip >> 8) & 0xFF, source_ip & 0xFF);
-	printf("Destination IP: %u.%u.%u.%u\n", (dest_ip >> 24) & 0xFF, (dest_ip >> 16) & 0xFF, (dest_ip >> 8) & 0xFF, dest_ip & 0xFF);
+	printf("TTL                      : %u\n", ttl);
+	printf("Protocol                 : %u (%s)\n", protocol, protocol_name);
+	printf("Checksum                 : 0x%04X\n", checksum);
+	printf("Source IP                : %u.%u.%u.%u\n", (source_ip >> 24) & 0xFF, (source_ip >> 16) & 0xFF, (source_ip >> 8) & 0xFF, source_ip & 0xFF);
+	printf("Destination IP           : %u.%u.%u.%u\n", (dest_ip >> 24) & 0xFF, (dest_ip >> 16) & 0xFF, (dest_ip >> 8) & 0xFF, dest_ip & 0xFF);
 
 	switch (protocol) {
 		case IP_PROTOCOL_ICMP: protocol_name = "ICMP"; analyze_icmp(packet + ihl * 4, caplen - ihl * 4); break;

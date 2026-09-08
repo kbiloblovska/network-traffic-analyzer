@@ -36,9 +36,9 @@ void analyze_ethernet(
 
 	printf("Destination MAC: ");
   print_mac(eth->destination);
-  printf("\nSource MAC: ");
+  printf("\nSource MAC     : ");
   print_mac(eth->source);
-  printf("\nProtocol: %s \n", protocol_name);
+  printf("\nProtocol       : %s \n", protocol_name);
 }
 
 void print_mac(const u_char *mac) {

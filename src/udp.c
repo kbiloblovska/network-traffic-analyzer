@@ -35,9 +35,10 @@ void analyze_udp(
 	uint16_t checksum = ntohs(udp->checksum);
 
 	printf("\n");
-	printf("UDP Header:\n");
-	printf("Source Port: %u\n", source_port);
-	printf("Destination Port: %u\n", destination_port);
-	printf("Length: %u\n", length);
-	printf("Checksum: %u\n", checksum);
+	printf("UDP \n");
+	printf("--------------------------------------------------------------\n");
+	printf("Source Port              : %u\n", source_port);
+	printf("Destination Port         : %u\n", destination_port);
+	printf("Length                   : %u\n", length);
+	printf("Checksum                 : %u\n", checksum);
 }

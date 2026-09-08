@@ -53,22 +53,23 @@ void analyze_tcp(
 	uint16_t urgent_pointer = ntohs(tcp->urgent_pointer);
 
 	printf("\n");
-	printf("TCP Header:\n");
-	printf("Source Port: %u\n", source_port);
-	printf("Destination Port: %u\n", destination_port);
-	printf("Sequence Number: %u\n", sequence_number);
-	printf("Acknowledgment Number: %u\n", acknowledgment_number);
+	printf("TCP \n");
+	printf("--------------------------------------------------------------\n");
+	printf("Source Port              : %u\n", source_port);
+	printf("Destination Port         : %u\n", destination_port);
+	printf("Sequence Number          : %u\n", sequence_number);
+	printf("Acknowledgment Number    : %u\n", acknowledgment_number);
 	print_tcp_flags(tcp);
-	printf("Window Size: %u\n", window_size);
-	printf("Checksum: %u\n", checksum);
-	printf("Urgent Pointer: %u\n", urgent_pointer);
+	printf("Window Size              : %u\n", window_size);
+	printf("Checksum                 : %u\n", checksum);
+	printf("Urgent Pointer           : %u\n", urgent_pointer);
 }
 
 void print_tcp_flags(const struct tcp_header *tcp) {
     uint8_t flags = tcp->flags;
 
-    printf("Flags: [ ");
-
+    printf("Flags                    : [ ");
+	
     if (flags & TH_SYN) printf("SYN ");
     if (flags & TH_ACK) printf("ACK ");
     if (flags & TH_FIN) printf("FIN ");

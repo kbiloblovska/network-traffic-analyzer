@@ -9,7 +9,8 @@
 int main(void) {
 	pcap_if_t *alldevs = NULL;
 
-	printf("NETWORK TRAFFIC ANALYZER\n");
+	printf("-------------------NETWORK TRAFFIC ANALYZER-------------------\n");
+  printf("==============================================================\n");
 	
 	int device_count = list_interfaces(&alldevs);
 	if(device_count < 0) {
@@ -17,10 +18,10 @@ int main(void) {
 	}
 
 	int selected_index = 0;
-
-	printf("\nSelect interface: ");
+  printf("--------------------------------------------------------------\n");
+	printf("Select interface: ");
 	if (scanf("%d", &selected_index) != 1) {
-    printf("Invalid input.\n");
+    printf("!!INVALID INPUT!!\n");
 
     pcap_freealldevs(alldevs);
 
@@ -29,7 +30,7 @@ int main(void) {
 
 	if (selected_index < 0 ||
         selected_index >= device_count) {
-    printf("Invalid interface number.\n");
+    printf("!!INVALID INTERFACE NUMBER!!\n");
 
     pcap_freealldevs(alldevs);
 
@@ -41,8 +42,8 @@ int main(void) {
   for (int i = 0; i < selected_index; i++) {
     selected_device = selected_device->next;
   }
-
-	printf("\nSelected interface:\n");
+  printf("--------------------------------------------------------------\n");
+  printf("Selected interface: %s\n", selected_device->name);
 
   if (selected_device->description != NULL) {
     printf("Description: %s\n", selected_device->description);
@@ -63,8 +64,8 @@ int main(void) {
 
     return EXIT_FAILURE;
   } 
-
-	printf("\nInterface opened successfully!\n");
+  printf("--------------------------------------------------------------\n");
+	printf("Interface opened successfully!\n");
 
   capture_packets(handle, 10);
 

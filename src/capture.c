@@ -80,25 +80,33 @@ void capture_packets(pcap_t *handle, int packets_count) {
     printf("ERROR: Unsupported link type.\n");
     return;
   }
+  int timeout = 0;
   while (packet_number < packets_count) {
     int result = pcap_next_ex(
       handle, 
       &header, 
       &packet
     );
-
     if (result == 1) {
       packet_number++;
-      printf("\nPacket #%d\n", packet_number);
-      printf("Captured length %u\n", header->caplen);
-      printf("Original length %u\n", header->len);
+      printf("==============================================================\n");
+      printf("Packet #%d\n", packet_number);
+      printf("--------------------------------------------------------------\n");
+      printf("Captured length: %u\n", header->caplen);
+      printf("Original length: %u\n", header->len);
+      printf("\n");
       analyze_ethernet(packet, header->caplen);
       printf("\n");
       analyze_ipv4(packet + 14, header->caplen - 14);
       printf("\n");
     } else if (result == 0) {
+      timeout++;
       printf("\nTimeout occurred.\nNo packet was available yet.\n");
-      continue;
+      if (timeout == 5) {
+        printf("No packets captured for a while. \n");
+        return;
+      }
+    continue;
     } else if (result == -1) {
       fprintf(stderr, "Error while capturing packet%s", pcap_geterr(handle));
       break;
@@ -107,7 +115,6 @@ void capture_packets(pcap_t *handle, int packets_count) {
       break;
     }
   }
-  
   printf("Packet capture finished.\n");
 }
 
