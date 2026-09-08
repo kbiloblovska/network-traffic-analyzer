@@ -5,6 +5,7 @@
 
 
 #include "../include/tcp.h"
+#include "../include/application.h"
 
 #pragma pack(push, 1)
 struct tcp_header {
@@ -63,8 +64,23 @@ void analyze_tcp(
 	printf("Window Size              : %u\n", window_size);
 	printf("Checksum                 : %u\n", checksum);
 	printf("Urgent Pointer           : %u\n", urgent_pointer);
-}
 
+	bpf_u_int32 payload_length = caplen - headers_length;
+
+	if (payload_length == 0) {
+        return;
+    }
+	
+		const u_char *payload = packet + headers_length;
+
+
+  analyze_application_tcp(
+        payload,
+        payload_length,
+        source_port,
+        destination_port
+    );
+	}
 void print_tcp_flags(const struct tcp_header *tcp) {
     uint8_t flags = tcp->flags;
 
@@ -80,4 +96,4 @@ void print_tcp_flags(const struct tcp_header *tcp) {
     if (flags & TH_CWR) printf("CWR ");
 
     printf("]\n");
-}
+};
